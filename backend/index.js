@@ -14,7 +14,7 @@ const fs = require("fs");
 const salt = bcrypt.genSaltSync(10);
 const secret = "asdfe45we45w345wegw345werjktjwertkj";
 
-app.use(cors({ credentials: true, origin: "https://affan-blogx.vercel.app" }));
+app.use(cors({ credentials: true, origin: "https://affan-blogx.vercel.app", sameSite: false }));
 app.use(express.json());
 app.use(cookieParser());
 app.use("/uploads", express.static(__dirname + "/uploads"));
@@ -41,9 +41,8 @@ app.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
   const userDoc = await User.findOne({ username });
-  const passOk = bcrypt.compareSync(password, userDoc.password);
+  const passOk = bcrypt.compareSync(password, userDoc?.password || '');
   if (passOk) {
-    // logged in
     jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
       if (err) throw err;
       res.cookie("token", token).json({
@@ -136,4 +135,3 @@ app.get("/post/:id", async (req, res) => {
 });
 
 app.listen(4000);
-//

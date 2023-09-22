@@ -1,7 +1,5 @@
 
 import "./App.css";
-import Post from "./Post";
-import Header from "./Header";
 import { Route, Routes } from "react-router-dom";
 import Layout from "./Layout";
 import IndexPage from "./pages/IndexPage";
@@ -14,10 +12,9 @@ import EditPost from "./pages/EditPost";
 
 import { NextUIProvider } from "@nextui-org/react";
 
-
 function App() {
   return (
-    // <NextUIProvider>
+    <NextUIProvider>
       <UserContextProvider>
         <Routes>
           <Route path="/" element={<Layout />}>
@@ -30,7 +27,7 @@ function App() {
           </Route>
         </Routes>
       </UserContextProvider>
-    // </NextUIProvider>
+    </NextUIProvider>
   );
 }
 
