@@ -14,7 +14,13 @@ const fs = require("fs");
 const salt = bcrypt.genSaltSync(10);
 const secret = "asdfe45we45w345wegw345werjktjwertkj";
 
-app.use(cors({ credentials: true, origin: "https://affan-blogx.vercel.app", sameSite: false }));
+app.use(
+  cors({
+    credentials: true,
+    origin: "https://affan-blogx.vercel.app",
+    sameSite: false,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use("/uploads", express.static(__dirname + "/uploads"));
@@ -41,14 +47,16 @@ app.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
   const userDoc = await User.findOne({ username });
-  const passOk = bcrypt.compareSync(password, userDoc?.password || '');
+  const passOk = bcrypt.compareSync(password, userDoc?.password || "");
   if (passOk) {
     jwt.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
       if (err) throw err;
-      res.cookie("token", token).json({
-        id: userDoc._id,
-        username,
-      });
+      res
+        .cookie("token", token, { sameSite: "None", secure: true, path: "/" })
+        .json({
+          id: userDoc._id,
+          username,
+        });
     });
   } else {
     res.status(400).json("wrong credentials");
@@ -64,7 +72,9 @@ app.get("/profile", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.cookie("token", "").json("ok");
+  res
+    .cookie("token", "", { sameSite: "None", secure: true, path: "/" })
+    .json("ok");
 });
 
 app.post("/post", uploadMiddleware.single("file"), async (req, res) => {
